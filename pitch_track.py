@@ -3,7 +3,7 @@ import aubio
 import sys
 import matplotlib.pyplot as plt
 import numpy as np
-import editdistance
+import distance
 
 def main():
     sr = 44100
@@ -15,6 +15,7 @@ def main():
     else:
         fn = './sample_data/twinkle_twinkle/trent/trent%d.wav'
 
+
     tolerance = .8
 
     pitch_o = aubio.pitch('yin', n_fft, hop_size, sr)
@@ -22,6 +23,7 @@ def main():
     pitch_o.set_tolerance(tolerance)
 
     strings = []
+    all_pitches = []
 
 
     for i in range(1, 3):
@@ -58,17 +60,11 @@ def main():
         time_plt -= time_plt[0]
 
         print(pitch_plt)
-
         strings.append(np.array_str(pitch_plt)[1:pitch_plt.size-1])
+        all_pitches.append(pitch_plt)
+#        plt.plot(time_plt, pitch_plt)
 
-        # intervals = np.zeros(pitch_plt.size-1)
-        # for j in range(intervals.size):
-        #     intervals[j] = pitch_plt[j+1]-pitch_plt[j]
-
-        plt.plot(time_plt, pitch_plt)
-        #plt.show()
-
-    print(editdistance.eval(strings[0],strings[1])/len(strings[1]))
+    print(distance.edit_distance(all_pitches[0],all_pitches[1], 1,1))
 
 
 def calculate_vectors(time_arr, pitch_arr):
@@ -85,7 +81,6 @@ def calculate_vectors(time_arr, pitch_arr):
     --------------------------
     Output:
     """
-
     N = len(time_arr)
     vectors = np.zeros((N-1, 3))
 
