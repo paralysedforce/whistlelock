@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Testing HTML5 Microphone API </title>
+    </head>
+    <body>
+    <script>
+var audioContext = new AudioContext();
+var audioInput, microphone_stream, buffer;
+console.log(AudioContext.sampleRate);
+
+
+function recordSound(){
+
+    var constraints = {'video': false, 'audio': true};
+
+    navigator.mediaDevices.getUserMedia(constraints).then(function(stream){
+        start_microphone(stream);
+    }).catch(function(err){
+        // Handle the error
+        alert(err);
+    });
+
+    function start_microphone(stream){
+        microphone_stream = audioContext.createMediaStreamSource(stream);
+        microphone_stream.connect(audioContext.destination);
+
+
+    }
+}
+
+
+    </script>
+
+    <button type="button" onclick="recordSound()">Rec</button>
+    <button type="button" onclick="playSound()">Play</button>
+
+    </body>
+</html>

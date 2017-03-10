@@ -3,7 +3,7 @@ import aubio
 import sys
 import matplotlib.pyplot as plt
 import numpy as np
-import editdistance
+import distance
 
 def track(fn):
     sr = 44100
@@ -59,7 +59,7 @@ def track(fn):
     #plt.show()
 
     return pitch_plt
-
+  
 
 def calculate_vectors(time_arr, pitch_arr):
     """
@@ -75,7 +75,6 @@ def calculate_vectors(time_arr, pitch_arr):
     --------------------------
     Output:
     """
-
     N = len(time_arr)
     vectors = np.zeros((N-1, 3))
 
