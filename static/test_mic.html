@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Testing HTML5 Microphone API </title>
+    </head>
+    <body>
+    <script type="text/javascript" src="recorder.js"></script>
+    <script type="text/javascript">
+
+var audioContext = new AudioContext();
+var microphone_stream, bufferNode, speakers = audioContext.destination;
+var sr = 44100;
+var recording = false, playing = false;
+
+
+function recordSound(){
+
+    var constraints = {'video': false, 'audio': true};
+    speakers = audioContext.destination;
+
+    navigator.mediaDevices.getUserMedia(constraints).then(function(stream){
+        start_microphone(stream);
+    }).catch(function(err){
+        alert(err);
+    });
+
+    function start_microphone(stream){
+        microphone_stream = audioContext.createMediaStreamSource(stream);
+        volumeNode = audioContext.createGain();
+        var sourceNode = audioContext.createBufferSource();
+        microphone_stream.connect(volumeNode);
+
+        var buffersize = 2048;
+        var recorder = audioContext.createScriptProcessor(buffersize, 1, 1);
+        recorder.onaudioprocess = function(e){
+            var inputBuffer = e.inputBuffer.get;
+            var outputBuffer = e.outputBuffer;
+
+            for (var i = 0; i < buffersize; i++){
+                outputBuffer[i] = inputBuffer[i];
+            }
+        }
+    }
+}
+
+function playSound(){
+    if (buffer){
+        bufferNode.connect(speakers);
+        buffer = null;
+    }
+}
+
+
+
+    </script>
+
+    <button type="button" onclick="recordSound()">Rec</button>
+    <button type="button" onclick="playSound()">Play</button>
+
+    </body>
+</html>
