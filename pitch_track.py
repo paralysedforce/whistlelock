@@ -26,7 +26,7 @@ def track(fn):
     total_frames = 0
     while True:
         samples, read = s()
-        pitch = int(pitch_o(samples)[0])
+        pitch = pitch_o(samples)[0]
         confidence = pitch_o.get_confidence()
         time = total_frames / sr
 
@@ -43,7 +43,7 @@ def track(fn):
             break
 
     # Processing
-    pitch_plt = np.array(pitch_plt)
+    pitch_plt = np.array(pitch_plt, dtype=np.float64)
     pitch_median = np.median(pitch_plt[:50])
     pitch_plt -= pitch_median
     time_plt = np.array(time_plt)

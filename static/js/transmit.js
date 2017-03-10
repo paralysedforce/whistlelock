@@ -29,7 +29,7 @@ function sendWAVToServer(){
     recorder && recorder.exportWAV(function(blob){
         /* Process this blob somehow */
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/datahandler");
+        xhr.open("POST", "/");
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onreadystatechange = function(){
             if (xhr.readyState == 4 && xhr.status == 200){
@@ -38,7 +38,26 @@ function sendWAVToServer(){
                 console.log("Certainty: " + resp.certainty.toString());
             }
         };
-        xhr.send(JSON.stringify(blob));
+
+        var username = document.getElementById('username').value;
+        var whistle;
+
+        var fd = new FormData();
+        fd.append('fname', 'test.wav');
+        fd.append('data', blob);
+        xhr.send(fd);
+
+
+        /*
+        var reader = new FileReader();
+        reader.addEventListener("loadend", function(e){
+            whistle = reader.result;
+            data = {'data': whistle, 'username': username};
+            xhr.send(JSON.stringify(data));
+        });
+
+        reader.readAsArrayBuffer(blob);
+        */
     });
 }
 

@@ -20,11 +20,10 @@ def edit_distance(s1, s2, del_cost, ins_cost, sub_cost = None):
             if s1[ii] == s2[jj]:
                 d[i, j] = d[i-1, j-1]
             else:
-                print(s1[ii], s2[jj], sub_cost(s1[ii], s2[jj]))
                 d[i, j] = min([d[i-1, j] + del_cost,
                     d[i, j-1] + ins_cost,
                     d[i-1, j-1]+ sub_cost(s1[ii], s2[jj])])
-    return d[-1, -1]
+    return d[-1, -1] / (len(s2) + len(s1))
 
 def main():
     a1 = np.array([1, 2, 3])
