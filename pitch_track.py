@@ -5,28 +5,32 @@ import matplotlib.pyplot as plt
 import numpy as np
 import distance
 
-def track(fn):
+
+def pitch_track(filename):
     sr = 44100
     n_fft = 4096
     hop_size = 512
 
+
+
     tolerance = .8
 
-    pitch_o = aubio.pitch('yinfft', n_fft, hop_size, sr)
+    pitch_o = aubio.pitch('yin', n_fft, hop_size, sr)
     pitch_o.set_unit('midi')
     pitch_o.set_tolerance(tolerance)
 
     strings = []
+    all_pitches = []
+
     pitches = []
     confidences = []
     time_plt = []
     pitch_plt = []
-
-    s = aubio.source(fn, sr, hop_size)
+    s = aubio.source(filename, sr, hop_size)
     total_frames = 0
     while True:
         samples, read = s()
-        pitch = pitch_o(samples)[0]
+        pitch = int(pitch_o(samples)[0])
         confidence = pitch_o.get_confidence()
         time = total_frames / sr
 
@@ -49,17 +53,80 @@ def track(fn):
     time_plt = np.array(time_plt)
     time_plt -= time_plt[0]
 
+#    print(pitch_plt)
     strings.append(np.array_str(pitch_plt)[1:pitch_plt.size-1])
-
-    # intervals = np.zeros(pitch_plt.size-1)
-    # for j in range(intervals.size):
-    #     intervals[j] = pitch_plt[j+1]-pitch_plt[j]
-
-    #plt.plot(time_plt, pitch_plt)
-    #plt.show()
+#    all_pitches.append(pitch_plt)
+#        plt.plot(time_plt, pitch_plt)
 
     return pitch_plt
-  
+
+
+def main():
+    pitch_track('./sample_data/twinkle_twinkle/trent/trent1.wav')
+
+
+'''
+def main():
+    sr = 44100
+    n_fft = 4096
+    hop_size = 512
+
+    if len(sys.argv) > 2:
+        fn = sys.argv[2]
+    else:
+        fn = './sample_data/twinkle_twinkle/trent/trent%d.wav'
+
+
+    tolerance = .8
+
+    pitch_o = aubio.pitch('yin', n_fft, hop_size, sr)
+    pitch_o.set_unit('midi')
+    pitch_o.set_tolerance(tolerance)
+
+    strings = []
+    all_pitches = []
+
+
+    for i in range(1, 3):
+        pitches = []
+        confidences = []
+        time_plt = []
+        pitch_plt = []
+        filename  = fn % i
+        s = aubio.source(filename, sr, hop_size)
+        total_frames = 0
+        while True:
+            samples, read = s()
+            pitch = int(pitch_o(samples)[0])
+            confidence = pitch_o.get_confidence()
+            time = total_frames / sr
+
+        #    print("%f %f %f" % (time, pitch, confidence))
+            pitches.append(pitch)
+            confidences.append(confidence)
+
+            if confidence > .95 and pitch >= 1:
+                time_plt.append(time)
+                pitch_plt.append(pitch)
+
+            total_frames += read
+            if read < hop_size: 
+                break
+
+        # Processing
+        pitch_plt = np.array(pitch_plt, dtype=np.float64)
+        pitch_median = np.median(pitch_plt[:50])
+        pitch_plt -= pitch_median
+        time_plt = np.array(time_plt)
+        time_plt -= time_plt[0]
+
+        print(pitch_plt)
+        strings.append(np.array_str(pitch_plt)[1:pitch_plt.size-1])
+        all_pitches.append(pitch_plt)
+#        plt.plot(time_plt, pitch_plt)
+
+    print(distance.edit_distance(all_pitches[0],all_pitches[1], 1,1))
+'''
 
 def calculate_vectors(time_arr, pitch_arr):
     """
